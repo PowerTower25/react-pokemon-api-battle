@@ -1,0 +1,44 @@
+body {
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  font-family: 'Inconsolata', sans-serif;
+}
+:root {
+  --border-color: #272536;
+  --maroon: 	#a82028;
+  --pink: #c85048;
+  --grey: #a8b8c8;
+  --text-color: #304160;
+  --background: #29335C;
+}
+
+
+h3 {
+  margin: 0;
+}
+
+.arena {
+  width: 100%;;
+  min-height: 100vh;
+  padding: 15px;
+}
+.card {
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  width: 400px;
+}
+
+.card__body {
+  padding: 2em;
+}
+
+.card__header {
+  padding: 1rem;
+}
+
+.arena__container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
