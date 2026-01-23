@@ -13,6 +13,11 @@ body {
   --background: #29335C;
 }
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; /* Optional, but highly recommended for consistent box model behavior */
+}
 
 h3 {
   margin: 0;
@@ -23,19 +28,7 @@ h3 {
   min-height: 100vh;
   padding: 15px;
 }
-.card {
-  border: 1px solid var(--border-color);
-  border-radius: 5px;
-  width: 400px;
-}
 
-.card__body {
-  padding: 2em;
-}
-
-.card__header {
-  padding: 1rem;
-}
 
 .arena__container {
   max-width: 1400px;

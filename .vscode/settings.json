@@ -1,0 +1,8 @@
+{
+  // The number of spaces a tab is equal to.
+  "editor.tabSize": 2,
+  // Insert spaces when pressing Tab. Set to true for spaces, false for tabs.
+  "editor.insertSpaces": true,
+  // Disable auto-detection of indentation based on file content.
+  "editor.detectIndentation": false
+}
