@@ -1,45 +1,52 @@
 import { useEffect, useState } from "react";
 import Card from "./components/card/Card";
 import TCGdex from '@tcgdex/sdk'
+import tcgdexApi from "./api/tcg-dex"
+import Form from "./components/form/Form";
 
-const apiURL = "https://api.pokemontcg.io/v2/cards?pageSize=1&page=100"
 
   
 function FormField() {
+const [inputValue, setInputValue] = useState('');
   const [cards, setCard] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const handleInputChangeInParent = (valueFromChild) => {
+    setInputValue(valueFromChild);
+  }
 
 const fetchRandomCard = async () => {
-  const tcgdex = new TCGdex('en');
     setLoading(true);
     try {
       
-// TCGdex provides a full card list endpoint
+      // TCGdex provides a full card list endpoint
       const response = await fetch('https://api.tcgdex.net/v2/en/cards');
       const allCards = await response.json();
       
-      // Shuffle and pick 3
-      const shuffled = [...allCards].sort(() => 0.5 - Math.random());
-      const selected = shuffled.slice(0, 3);
       
-      // Fetch detailed info for each card (includes attacks)
+      const shuffledCards = [...allCards].sort(() => 0.5 - Math.random());
+
+      // Shuffle and get all cards based on user input
+      const selectedCards = shuffledCards.slice(0, Number(inputValue));
+      
+      // Fetch detailed info for each card
       const detailedCards = await Promise.all(
-        selected.map(card => 
+        selectedCards.map(card => 
           fetch(`https://api.tcgdex.net/v2/en/cards/${card.id}`).then(res => res.json())
         )
       )
-      setCard(detailedCards); // Set the 3 cards
+      console.log(detailedCards)
+      setCard(detailedCards); // Set cards data
     } catch (error) {
       console.error("Error fetching card:", error);
     }
     setLoading(false);
   }
 
-
     return (
         <>
+      <Form onInputChange={handleInputChangeInParent}/>
         <button onClick={fetchRandomCard}>{loading ? 'Loading' : 'Get a card'}</button>
 
           {cards && cards.map((card) => {
