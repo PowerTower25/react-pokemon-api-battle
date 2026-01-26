@@ -14,10 +14,11 @@ function Card({attacks, name, hp}) {
                 <div className="card__body__abilities"></div>
                 <div className="card__body__attacks">
                   <h4>Attacks</h4>
+
                   {attacks && attacks.map((attack, index) => (
                     <div key={index} className="attack">
                       <p><strong>{attack.name}</strong> ({attack.damage})</p>
-                      <p>{attack.text}</p>
+                      <p>{attack.effect}</p>
                       <p>Cost: {attack.cost.join(', ')}</p>
                     </div>
                   ))}
