@@ -1,6 +1,8 @@
+import { useState } from "react";
 import "./Card.css";
 
-function Card({attacks, name, hp}) {
+function Card({attacks, name, hp, onAttackClick}) {
+
 
     const elementId = `${name}-hp`
     return (
@@ -17,7 +19,7 @@ function Card({attacks, name, hp}) {
 
                   {attacks && attacks.map((attack, index) => (
                     <div key={index} className="attack">
-                      <p><strong>{attack.name}</strong> ({attack.damage})</p>
+                      <button onClick={() => onAttackClick(attack.damage)}><strong>{attack.name}</strong> {attack.damage ? (attack.damage) : null}</button>
                       <p>{attack.effect}</p>
                       <p>Cost: {attack.cost.join(', ')}</p>
                     </div>

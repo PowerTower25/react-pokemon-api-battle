@@ -7,13 +7,36 @@ import Form from "./components/form/Form";
 
   
 function FormField() {
-const [inputValue, setInputValue] = useState('');
-  const [cards, setCard] = useState(null);
+  const [attackDamage, setAttackDamage] = useState(null);
+  const [opponentAttackDamage, setOpponentAttackDamage] = useState(null)
+  const [inputValue, setInputValue] = useState('');
+  const [cards, setCard] = useState([]);
+  const [opponentCard, setOpponentCard] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+
+  async function fetchOpponentCard() {
+    const tcgdex = new TCGdex('en'); 
+      try {
+        // Fetch random card using SDK
+        const randomCard = await tcgdex.random.card();
+        setOpponentCard(randomCard);
+      } catch (error) {
+        console.error('Error fetching card:', error);
+      }
+    }
+
   const handleInputChangeInParent = (valueFromChild) => {
     setInputValue(valueFromChild);
+  }
+
+  const handleAttackClick = (attack) => {
+    setAttackDamage(attack)
+  }
+  
+  const handleOpponentAttackClick = (attack) => {
+    setOpponentAttackDamage(attack)
   }
 
 const fetchRandomCard = async () => {
@@ -38,6 +61,7 @@ const fetchRandomCard = async () => {
       )
       console.log(detailedCards)
       setCard(detailedCards); // Set cards data
+      await fetchOpponentCard();
     } catch (error) {
       console.error("Error fetching card:", error);
     }
@@ -46,12 +70,22 @@ const fetchRandomCard = async () => {
 
     return (
         <>
-      <Form onInputChange={handleInputChangeInParent}/>
-        <button onClick={fetchRandomCard}>{loading ? 'Loading' : 'Get a card'}</button>
+      <Form onInputChange={handleInputChangeInParent} handleClick={fetchRandomCard} text={loading ? 'Loading' : 'Get a card'}/>
+          <p> You hit for {attackDamage}</p>
+          <div className="hand">
+            
+            {cards && cards.map((card) => {
+              return <Card key={card.id} name={card.name} hp={card.hp} attacks={card.attacks} onAttackClick={handleAttackClick}/>
+            })}
+          </div>
 
-          {cards && cards.map((card) => {
-            return <Card key={card.id} name={card.name} hp={card.hp} attacks={card.attacks}/>
-          })}
+            {opponentCard &&
+            <div>
+            <h3>You're opponent!</h3>
+             {opponentAttackDamage ? (<p>They hit you for {opponentAttackDamage}!</p>) : null} 
+            <Card name={opponentCard.name} hp={opponentCard.hp} attacks={opponentCard.attacks} onAttackClick={handleOpponentAttackClick} />
+            </div>
+            }
         </>
     )
 }
