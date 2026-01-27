@@ -3,12 +3,14 @@ import Card from "./components/card/Card";
 import TCGdex from '@tcgdex/sdk'
 import tcgdexApi from "./api/tcg-dex"
 import Form from "./components/form/Form";
+import { all } from "axios";
 
 
   
 function FormField() {
   const [attackDamage, setAttackDamage] = useState(null);
   const [opponentAttackDamage, setOpponentAttackDamage] = useState(null)
+  const [cardType, setCardType] = useState(null);
   const [inputValue, setInputValue] = useState('');
   const [cards, setCard] = useState([]);
   const [opponentCard, setOpponentCard] = useState(null);
@@ -27,8 +29,13 @@ function FormField() {
       }
     }
 
-  const handleInputChangeInParent = (valueFromChild) => {
-    setInputValue(valueFromChild);
+  const getNumberOfCards = (inputValue) => {
+    setInputValue(inputValue);
+  }
+
+  const getCardType = (selectValue) => {
+
+    setCardType(selectValue);
   }
 
   const handleAttackClick = (attack) => {
@@ -44,22 +51,24 @@ const fetchRandomCard = async () => {
     try {
       
       // TCGdex provides a full card list endpoint
-      const response = await fetch('https://api.tcgdex.net/v2/en/cards');
+      const response = await fetch(`https://api.tcgdex.net/v2/en/cards?types=eq:${cardType}`);
       const allCards = await response.json();
-      
-      
+
       const shuffledCards = [...allCards].sort(() => 0.5 - Math.random());
+      const filtered = shuffledCards.filter(card => 
+          card.types && card.types.includes(cardType)
+        );
+
 
       // Shuffle and get all cards based on user input
       const selectedCards = shuffledCards.slice(0, Number(inputValue));
-      
+
       // Fetch detailed info for each card
       const detailedCards = await Promise.all(
         selectedCards.map(card => 
           fetch(`https://api.tcgdex.net/v2/en/cards/${card.id}`).then(res => res.json())
         )
       )
-      console.log(detailedCards)
       setCard(detailedCards); // Set cards data
       await fetchOpponentCard();
     } catch (error) {
@@ -70,8 +79,8 @@ const fetchRandomCard = async () => {
 
     return (
         <>
-      <Form onInputChange={handleInputChangeInParent} handleClick={fetchRandomCard} text={loading ? 'Loading' : 'Get a card'}/>
-          <p> You hit for {attackDamage}</p>
+      <Form onInputChange={getNumberOfCards} onSelectChange={getCardType} handleClick={fetchRandomCard} text={loading ? 'Loading' : 'Get a card'}/>
+          {attackDamage ? (<p>They hit you for {attackDamage}!</p>) : null} 
           <div className="hand">
             
             {cards && cards.map((card) => {

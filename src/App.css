@@ -10,6 +10,7 @@ body {
   --grey: #a8b8c8;
   --text-color: #304160;
   --background: #29335C;
+  --white: #FFF;
 }
 
 * {
