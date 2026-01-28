@@ -1,8 +1,6 @@
-import { useState } from "react";
 import "./Card.css";
 
 function Card({attacks, name, hp, onAttackClick}) {
-
 
     const elementId = `${name}-hp`
     return (

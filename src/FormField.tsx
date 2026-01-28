@@ -12,7 +12,7 @@ function FormField() {
   const [opponentAttackDamage, setOpponentAttackDamage] = useState(null)
   const [cardType, setCardType] = useState(null);
   const [inputValue, setInputValue] = useState('');
-  const [cards, setCard] = useState([]);
+  const [cards, setCard] = useState(null);
   const [opponentCard, setOpponentCard] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -34,7 +34,6 @@ function FormField() {
   }
 
   const getCardType = (selectValue) => {
-
     setCardType(selectValue);
   }
 
@@ -79,7 +78,12 @@ const fetchRandomCard = async () => {
 
     return (
         <>
-      <Form onInputChange={getNumberOfCards} onSelectChange={getCardType} handleClick={fetchRandomCard} text={loading ? 'Loading' : 'Get a card'}/>
+{!cards ? (
+        // Wrap multiple elements in a React Fragment
+<Form onInputChange={getNumberOfCards} onSelectChange={getCardType} handleClick={fetchRandomCard} text={loading ? 'Loading' : 'Get a card'}/>
+      ) : (
+        // The false branch can also have multiple elements
+        <>
           {attackDamage ? (<p>They hit you for {attackDamage}!</p>) : null} 
           <div className="hand">
             
@@ -95,6 +99,10 @@ const fetchRandomCard = async () => {
             <Card name={opponentCard.name} hp={opponentCard.hp} attacks={opponentCard.attacks} onAttackClick={handleOpponentAttackClick} />
             </div>
             }
+        </>
+      )}
+      
+
         </>
     )
 }

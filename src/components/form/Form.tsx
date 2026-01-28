@@ -17,6 +17,7 @@ function Form({onInputChange, onSelectChange, handleClick, text}) {
       <input id="cards-number" type="text" onChange={handleInputChange}/>
       <label htmlFor="card-type">What is your favorite type?</label>
       <select id="card-type" onBlur={handleSelectChange}>
+        <option value="">Please select a type</option>
         <option value="Colorless">Normal/Flying</option>
         <option value="Grass">Grass</option>
         <option value="Water">Water</option>
