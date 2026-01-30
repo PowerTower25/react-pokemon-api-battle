@@ -8,7 +8,7 @@ const Card = ({attacks, name, hp, onAttackClick}) => {
         <div className="card">
             <div className="card__header">
                 <h3 aria-describedby={elementId}>{name}</h3>
-                <p id={elementId}>HP{hp}</p>
+                 {hp <= 0 ?<p style={{ color: 'red' }}>Fainted!</p> : <p id={elementId}>HP{hp}</p>}
             </div>
             <div className="card__body">
                 <div className="card__body__abilities"></div>
@@ -20,8 +20,10 @@ const Card = ({attacks, name, hp, onAttackClick}) => {
                       <button onClick={() => onAttackClick(attack.damage)}><strong>{attack.name}</strong> {attack.damage ? (attack.damage) : null}</button>
                       <p>{attack.effect}</p>
                       <p>Cost: {attack.cost.join(', ')}</p>
+                     
                     </div>
                   ))}
+                 
                 </div>
             </div>
             <div className="card_footer"></div>

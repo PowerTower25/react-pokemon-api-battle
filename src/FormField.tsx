@@ -9,7 +9,7 @@ function FormField() {
   const [opponentAttackDamage, setOpponentAttackDamage] = useState(null)
   const [cardType, setCardType] = useState(null);
   const [inputValue, setInputValue] = useState('');
-  const [cards, setCard] = useState(null);
+  const [card, setCard] = useState(null);
   const [opponentCard, setOpponentCard] = useState({ hp: 100 });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -49,28 +49,23 @@ function FormField() {
   
   const handleOpponentAttackClick = (attack) => {
     setOpponentAttackDamage(attack)
+    setCard(prev => ({ ...prev, hp: prev.hp - attack }));
   }
 
 const fetchRandomCard = async () => {
     setLoading(true);
     try {
       
-      // TCGdex provides a full card list endpoint
-      const response = await fetch(`https://api.tcgdex.net/v2/en/cards?types=eq:${cardType}`);
-      const allCards = await response.json();
-
-      const shuffledCards = [...allCards].sort(() => 0.5 - Math.random());
-
-      // Shuffle and get all cards based on user input
-      const selectedCards = shuffledCards.slice(0, Number(inputValue));
-
-      // Fetch detailed info for each card
-      const detailedCards = await Promise.all(
-        selectedCards.map(card => 
-          fetch(`https://api.tcgdex.net/v2/en/cards/${card.id}`).then(res => res.json())
-        )
-      )
-      setCard(detailedCards); // Set cards data
+    fetch('https://api.tcgdex.net/v2/en/cards')
+      .then(response => response.json())
+      .then(data => {
+        // Select a random card from the list
+        const randomCard = data[Math.floor(Math.random() * data.length)];
+        // Fetch full details for the random card
+        return fetch(`https://api.tcgdex.net/v2/en/cards/${randomCard.id}`);
+      })
+      .then(response => response.json())
+      .then(data => setCard(data))
     } catch (error) {
       console.error("Error fetching card:", error);
     }
@@ -78,30 +73,26 @@ const fetchRandomCard = async () => {
   }
 
     return (
-        <>
-{!cards ? (
-        // Wrap multiple elements in a React Fragment
-<Form onInputChange={getNumberOfCards} onSelectChange={getCardType} handleClick={fetchRandomCard} text={loading ? 'Loading' : 'Get a card'}/>
-      ) : (
-        <>
+    <>
+      {!card ? (<Form onInputChange={getNumberOfCards} onSelectChange={getCardType} handleClick={fetchRandomCard} text={loading ? 'Loading' : 'Get a card'}/>) : (<>
           {attackDamage ? (<p>You hit them for {attackDamage}!</p>) : null} 
           <div className="hand">
-            
-            {cards && cards.map((card) => {
-              return <Card key={card.id} name={card.name} hp={card.hp} attacks={card.attacks} onAttackClick={handleAttackClick}/>
-            })}
+             {card.hp < 0 ? (<p className="text-align--center">You lose!</p>) : null}
+          <Card key={card.id} name={card.name} hp={card.hp} attacks={card.attacks} onAttackClick={handleAttackClick}/>
           </div>
 
             {opponentCard &&
             <div>
             <h3>You're opponent!</h3>
              {opponentAttackDamage ? (<p>They hit you for {opponentAttackDamage}!</p>) : null}
-             {opponentCard.hp > 0 ? (<Card name={opponentCard.name} hp={opponentCard.hp} attacks={opponentCard.attacks} onAttackClick={handleOpponentAttackClick} />) : (<p className="text-align--center">You win!</p>)}
+             {opponentCard.hp < 0 ? (<p className="text-align--center">You win!</p>) : null}
+             <Card name={opponentCard.name} hp={opponentCard.hp} attacks={opponentCard.attacks} onAttackClick={handleOpponentAttackClick} />
 
             </div>
             }
-        </>
-      )}
+        </>)}
+
+        
       
 
         </>
