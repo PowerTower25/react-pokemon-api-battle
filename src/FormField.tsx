@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Card from "./components/card/Card";
 import TCGdex from '@tcgdex/sdk'
-import tcgdexApi from "./api/tcg-dex"
+import fetchCards from "./services/api";
 import Form from "./components/form/Form";
 
 function FormField() {
@@ -54,18 +54,24 @@ function FormField() {
 
 const fetchRandomCard = async () => {
     setLoading(true);
+    setError(null)
     try {
-      
-    fetch('https://api.tcgdex.net/v2/en/cards')
-      .then(response => response.json())
-      .then(data => {
-        // Select a random card from the list
-        const randomCard = data[Math.floor(Math.random() * data.length)];
-        // Fetch full details for the random card
-        return fetch(`https://api.tcgdex.net/v2/en/cards/${randomCard.id}`);
-      })
-      .then(response => response.json())
-      .then(data => setCard(data))
+      // console.log(fetchCards())
+     const results = await fetchCards(cardType);
+     
+      console.log(results)
+     setCard(results)
+    // fetch(`https://api.tcgdex.net/v2/en/cards?types=eq:${cardType}`)
+    //   .then(response => response.json())
+    //   .then(data => {
+    //     // Select a random card from the list
+    //     const randomCard = data[Math.floor(Math.random() * data.length)];
+    //     // Fetch full details for the random card
+    //     return fetch(`https://api.tcgdex.net/v2/en/cards/${randomCard.id}`);
+    //   })
+    //   .then(response => response.json())
+    //   .then(data => setCard(data))
+
     } catch (error) {
       console.error("Error fetching card:", error);
     }
@@ -77,7 +83,7 @@ const fetchRandomCard = async () => {
       {!card ? (<Form onInputChange={getNumberOfCards} onSelectChange={getCardType} handleClick={fetchRandomCard} text={loading ? 'Loading' : 'Get a card'}/>) : (<>
           {attackDamage ? (<p>You hit them for {attackDamage}!</p>) : null} 
           <div className="hand">
-             {card.hp < 0 ? (<p className="text-align--center">You lose!</p>) : null}
+             {card.hp <= 0 ? (<p className="text-align--center">You lose!</p>) : null}
           <Card key={card.id} name={card.name} hp={card.hp} attacks={card.attacks} onAttackClick={handleAttackClick}/>
           </div>
 
