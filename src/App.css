@@ -29,6 +29,9 @@ h3 {
   padding: 15px;
 }
 
+.text-align--center {
+  text-align: center;
+}
 
 .arena__container {
   max-width: 1400px;

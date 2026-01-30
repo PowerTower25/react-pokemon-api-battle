@@ -4,8 +4,6 @@ import TCGdex from '@tcgdex/sdk'
 import tcgdexApi from "./api/tcg-dex"
 import Form from "./components/form/Form";
 
-
-  
 function FormField() {
   const [attackDamage, setAttackDamage] = useState(null);
   const [opponentAttackDamage, setOpponentAttackDamage] = useState(null)
@@ -17,16 +15,24 @@ function FormField() {
   const [error, setError] = useState(null);
 
 
-  async function fetchOpponentCard() {
-    const tcgdex = new TCGdex('en'); 
+
+  useEffect(() => {
+    const fetchOpponentCard = async () => {
+    const tcgdex = await new TCGdex('en'); 
       try {
         // Fetch random card using SDK
         const randomCard = await tcgdex.random.card();
-        setOpponentCard(randomCard);
+       setOpponentCard(randomCard);
+
       } catch (error) {
         console.error('Error fetching card:', error);
       }
     }
+
+
+    fetchOpponentCard();
+    console.log(opponentCard)
+  }, [])
 
   const getNumberOfCards = (inputValue) => {
     setInputValue(inputValue);
@@ -43,8 +49,6 @@ function FormField() {
   
   const handleOpponentAttackClick = (attack) => {
     setOpponentAttackDamage(attack)
-     cards.hp = cards.hp - attack;
-
   }
 
 const fetchRandomCard = async () => {
@@ -67,7 +71,6 @@ const fetchRandomCard = async () => {
         )
       )
       setCard(detailedCards); // Set cards data
-      await fetchOpponentCard();
     } catch (error) {
       console.error("Error fetching card:", error);
     }
@@ -93,8 +96,9 @@ const fetchRandomCard = async () => {
             {opponentCard &&
             <div>
             <h3>You're opponent!</h3>
-             {opponentAttackDamage ? (<p>They hit you for {opponentAttackDamage}!</p>) : null} 
-            <Card name={opponentCard.name} hp={opponentCard.hp} attacks={opponentCard.attacks} onAttackClick={handleOpponentAttackClick} />
+             {opponentAttackDamage ? (<p>They hit you for {opponentAttackDamage}!</p>) : null}
+             {opponentCard.hp > 0 ? (<Card name={opponentCard.name} hp={opponentCard.hp} attacks={opponentCard.attacks} onAttackClick={handleOpponentAttackClick} />) : (<p className="text-align--center">You win!</p>)}
+
             </div>
             }
         </>
