@@ -1,6 +1,6 @@
 import "./Card.css";
 
-function Card({attacks, name, hp, onAttackClick}) {
+const Card = ({attacks, name, hp, onAttackClick}) => {
 
     const elementId = `${name}-hp`
     return (

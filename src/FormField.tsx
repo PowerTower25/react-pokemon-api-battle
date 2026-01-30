@@ -3,7 +3,6 @@ import Card from "./components/card/Card";
 import TCGdex from '@tcgdex/sdk'
 import tcgdexApi from "./api/tcg-dex"
 import Form from "./components/form/Form";
-import { all } from "axios";
 
 
   
@@ -39,10 +38,13 @@ function FormField() {
 
   const handleAttackClick = (attack) => {
     setAttackDamage(attack)
+    opponentCard.hp = opponentCard.hp - attack;
   }
   
   const handleOpponentAttackClick = (attack) => {
     setOpponentAttackDamage(attack)
+     cards.hp = cards.hp - attack;
+
   }
 
 const fetchRandomCard = async () => {
@@ -54,10 +56,6 @@ const fetchRandomCard = async () => {
       const allCards = await response.json();
 
       const shuffledCards = [...allCards].sort(() => 0.5 - Math.random());
-      const filtered = shuffledCards.filter(card => 
-          card.types && card.types.includes(cardType)
-        );
-
 
       // Shuffle and get all cards based on user input
       const selectedCards = shuffledCards.slice(0, Number(inputValue));
@@ -84,7 +82,7 @@ const fetchRandomCard = async () => {
       ) : (
         // The false branch can also have multiple elements
         <>
-          {attackDamage ? (<p>They hit you for {attackDamage}!</p>) : null} 
+          {attackDamage ? (<p>You hit them for {attackDamage}!</p>) : null} 
           <div className="hand">
             
             {cards && cards.map((card) => {

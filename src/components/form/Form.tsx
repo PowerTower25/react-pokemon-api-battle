@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./Form.css";
 
-function Form({onInputChange, onSelectChange, handleClick, text}) {
+const Form = ({onInputChange, onSelectChange, handleClick, text}) => {
 
   const handleInputChange = (event) => {
     onInputChange(event.target?.value)
